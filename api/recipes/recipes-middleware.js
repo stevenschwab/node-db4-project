@@ -1,8 +1,8 @@
 const db = require('../../data/db-config')
 
 const checkRecipeId = async (req, res, next) => {
-    const recipe_id = req.params
-    const recipe = db('recipes').where('id', recipe_id).first()
+    const { recipe_id } = req.params
+    const recipe = await db('recipes').where('id', recipe_id).first()
 
     if (recipe) {
         next()
