@@ -5,7 +5,7 @@ const Recipes = require('./recipes-model')
 const router = express.Router()
 
 router.get('/:recipe_id', checkRecipeId, (req, res, next) => {
-    const recipe_id = req.params
+    const { recipe_id}  = req.params
 
     Recipes.getRecipeById(recipe_id)
         .then(recipe => {

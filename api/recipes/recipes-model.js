@@ -10,13 +10,14 @@ async function getRecipeById(recipe_id) {
             'st.recipe_id', 
             're.recipe_name', 
             're.created_at',
-            'si.step_id', 
+            'st.id as step_id', 
             'st.step_number', 
             'st.step_instructions',
             'si.ingredient_id', 
             'ing.ingredient_name', 
             'si.quantity'
-        );
+        )
+        .orderBy('step_number', 'ASC');
 
     let result = recipe.reduce((acc, recipeStep) => {
       const {
@@ -42,7 +43,7 @@ async function getRecipeById(recipe_id) {
             quantity 
         })
       }
-      
+
       acc.steps.push(step)
       return acc
     }, { 
