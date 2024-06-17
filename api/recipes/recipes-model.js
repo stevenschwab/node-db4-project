@@ -56,6 +56,15 @@ async function getRecipeById(recipe_id) {
     return result
 }
 
+function addRecipe(recipe) {
+    return db('recipes')
+      .insert(recipe)
+      .then(([id]) => {
+        return getRecipeById(id)
+      })
+}
+
 module.exports = {
-    getRecipeById
+    getRecipeById,
+    addRecipe
 }

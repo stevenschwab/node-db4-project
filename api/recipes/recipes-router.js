@@ -1,5 +1,5 @@
 const express = require('express')
-const { checkRecipeId } = require('./recipes-middleware')
+const { checkRecipeId, validateRecipe } = require('./recipes-middleware')
 const Recipes = require('./recipes-model')
 
 const router = express.Router()
@@ -12,6 +12,16 @@ router.get('/:recipe_id', checkRecipeId, (req, res, next) => {
             res.json(recipe)
         })
         .catch(next)
+})
+
+router.post('/', validateRecipe, (req, res, next) => {
+    const recipe = req.body
+
+    Recipes.addRecipe(recipe)
+      .then(recipe => {
+        res.status(201).json(recipe)
+      })
+      .catch(next)
 })
 
 router.use((error, req, res, next) => { // eslint-disable-line
