@@ -97,8 +97,8 @@ The representation **sent to the server** _could_ look like the following:
       "step_number": 2,
       "step_instructions": "Mix eggs and ham",
       "ingredients": [
-        { "ingredient_id": 27, "quantity": 2 },
-        { "ingredient_id": 48, "quantity": 0.1 }
+        { "ingredient_id": 27, "quantity": 2, "unit": "items" },
+        { "ingredient_id": 48, "quantity": 0.1, "unit": "lb" }
       ]
     },
   ]

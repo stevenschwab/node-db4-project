@@ -56,12 +56,56 @@ async function getRecipeById(recipe_id) {
     return result
 }
 
-function addRecipe(recipe) {
-    return db('recipes')
-      .insert(recipe)
-      .then(([id]) => {
-        return getRecipeById(id)
-      })
+async function addRecipe(recipe) {
+    const { recipe_name, steps } = recipe
+
+    // start a transaction
+    return db.transaction(async trx => {
+        // insert the new recipe
+        const [recipe_id] = await trx('recipes')
+          .insert({ recipe_name})
+          .returning('id')
+
+        // prepare steps with the new recipe id
+        const stepsWithRecipeId = steps.map((step) => ({
+            recipe_id,
+            step_number: step.step_number,
+            step_instructions: step.step_instructions
+        }))
+
+        // insert the steps
+        await trx('steps').insert(stepsWithRecipeId)
+
+        // find step ids
+        const newSteps = await trx('steps')
+          .select(
+            'id as step_id', 
+            'step_number'
+          )
+          .where('recipe_id', recipe_id)
+
+        // prepare ingredients with step_id
+        const ingredientsWithStepId = []
+        steps.forEach(step => {
+            if (step.ingredients.length) {
+                const { step_id } = newSteps.find(newStep => newStep.step_number === step.step_number)
+                step.ingredients.forEach(ingredient => {
+                    ingredientsWithStepId.push({
+                        step_id,
+                        ...ingredient
+                    })
+                })
+            }
+        })
+
+        // insert the step_ingredients
+        if (ingredientsWithStepId.length) {
+            await trx('steps_ingredients').insert(ingredientsWithStepId)
+        }
+        
+        // return new recipe
+        return await getRecipeById(recipe_id)
+    })
 }
 
 module.exports = {

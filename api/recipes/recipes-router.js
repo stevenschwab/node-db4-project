@@ -15,9 +15,7 @@ router.get('/:recipe_id', checkRecipeId, (req, res, next) => {
 })
 
 router.post('/', validateRecipe, (req, res, next) => {
-    const recipe = req.body
-
-    Recipes.addRecipe(recipe)
+    Recipes.addRecipe(req.body)
       .then(recipe => {
         res.status(201).json(recipe)
       })
