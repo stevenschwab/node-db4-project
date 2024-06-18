@@ -81,8 +81,6 @@ const validateStepIngredients = async (req, res, next) => {
                         !unit.trim().length
                     ) {
                         throw new Error('invalid unit')
-                    } else {
-                        return ingredient;
                     }
                 }
             }
