@@ -64,13 +64,11 @@ async function insertRecipe(trx, recipe_name) {
 }
 
 async function insertSteps(trx, recipe_id, steps) {
-    // prepare steps with the new recipe id
     const stepsWithRecipeId = steps.map((step) => ({
         recipe_id,
         step_number: step.step_number,
         step_instructions: step.step_instructions
     }))
-    // insert the steps
     await trx('steps').insert(stepsWithRecipeId)
 }
 
