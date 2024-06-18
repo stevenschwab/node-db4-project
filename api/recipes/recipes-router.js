@@ -1,5 +1,10 @@
 const express = require('express')
-const { checkRecipeId, validateRecipe } = require('./recipes-middleware')
+const { 
+    checkRecipeId, 
+    validateRecipe, 
+    validateSteps, 
+    validateStepIngredients
+} = require('./recipes-middleware')
 const Recipes = require('./recipes-model')
 
 const router = express.Router()
@@ -14,7 +19,12 @@ router.get('/:recipe_id', checkRecipeId, (req, res, next) => {
         .catch(next)
 })
 
-router.post('/', validateRecipe, (req, res, next) => {
+router.post(
+    '/', 
+    validateRecipe, 
+    validateSteps, 
+    validateStepIngredients, 
+    (req, res, next) => {
     Recipes.addRecipe(req.body)
       .then(recipe => {
         res.status(201).json(recipe)

@@ -113,7 +113,17 @@ async function addRecipe(recipe) {
     })
 }
 
+async function getIngredientById(ingredient_id) {
+    const ingredient = await db('ingredients')
+        .select('ingredient_name')
+        .where('id', ingredient_id)
+        .first()
+
+    return ingredient
+}
+
 module.exports = {
     getRecipeById,
-    addRecipe
+    addRecipe,
+    getIngredientById
 }
