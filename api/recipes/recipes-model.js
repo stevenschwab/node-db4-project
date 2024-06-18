@@ -1,7 +1,7 @@
 const db = require('../../data/db-config')
 
-async function getRecipeById(recipe_id) {
-    const recipe = await db('recipes as re')
+async function getRecipeById(recipe_id, trx = db) {
+    const recipe = await trx('recipes as re')
         .join('steps as st', 're.id', 'st.recipe_id')
         .leftJoin('steps_ingredients as si', 'st.id', 'si.step_id')
         .leftJoin('ingredients as ing', 'si.ingredient_id', 'ing.id')
@@ -57,9 +57,11 @@ async function getRecipeById(recipe_id) {
 }
 
 async function insertRecipe(trx, recipe_name) {
-    const [recipe_id] = await trx('recipes')
+    const [result] = await trx('recipes')
         .insert({ recipe_name})
         .returning('id')
+    
+    const recipe_id = result.id
     return recipe_id
 }
 
@@ -69,6 +71,7 @@ async function insertSteps(trx, recipe_id, steps) {
         step_number: step.step_number,
         step_instructions: step.step_instructions
     }))
+
     await trx('steps').insert(stepsWithRecipeId)
 }
 
@@ -94,7 +97,7 @@ function prepareIngredientsWithStepId(steps, newSteps) {
     return ingredientsWithStepId
 }
 
-async function insertIngredients(trx, ingredientsWithStepId) {
+async function insertStepsIngredients(trx, ingredientsWithStepId) {
     if (ingredientsWithStepId.length) {
         await trx('steps_ingredients').insert(ingredientsWithStepId)
     }
@@ -108,8 +111,8 @@ async function addRecipe(recipe) {
         await insertSteps(trx, recipe_id, steps)
         const newSteps = await getNewSteps(trx, recipe_id)
         const ingredientsWithStepId = prepareIngredientsWithStepId(steps, newSteps)
-        await insertIngredients(trx, ingredientsWithStepId)
-        return await getRecipeById(recipe_id)
+        await insertStepsIngredients(trx, ingredientsWithStepId)
+        return await getRecipeById(recipe_id, trx)
     })
 }
 
