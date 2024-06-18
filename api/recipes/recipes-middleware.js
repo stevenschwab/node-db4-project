@@ -58,15 +58,11 @@ const validateStepIngredients = async (req, res, next) => {
     const { steps } = req.body
 
     try {
-        const ingredientChecks = steps.flatMap(step => {
+        for (const step of steps) {
             if (step.ingredients && step.ingredients.length > 0) {
-                return step.ingredients.map(async ingredient => {
-                    const { 
-                        ingredient_id, 
-                        quantity, 
-                        unit 
-                    } = ingredient
-    
+                for (const ingredient of step.ingredients) {
+                    const { ingredient_id, quantity, unit } = ingredient
+
                     if (
                         ingredient_id == null || 
                         typeof ingredient_id !== 'number' || 
@@ -88,13 +84,10 @@ const validateStepIngredients = async (req, res, next) => {
                     } else {
                         return ingredient;
                     }
-                })
+                }
             }
-            return []
-        })
-    
-        await Promise.all(ingredientChecks)
-    
+        }
+
         next()
     } catch (error) {
         next({ status: 400, message: error.message })
