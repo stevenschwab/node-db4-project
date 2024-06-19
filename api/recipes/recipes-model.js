@@ -125,8 +125,14 @@ async function getIngredientById(ingredient_id) {
     return ingredient
 }
 
+async function getAllIngredients() {
+    return await db('ingredients')
+        .select('id', 'ingredient_name')
+}
+
 module.exports = {
     getRecipeById,
     addRecipe,
-    getIngredientById
+    getIngredientById,
+    getAllIngredients
 }

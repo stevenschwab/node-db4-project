@@ -1,4 +1,5 @@
 const express = require('express')
+const router = express.Router()
 const { 
     checkRecipeId, 
     validateRecipe, 
@@ -7,7 +8,13 @@ const {
 } = require('./recipes-middleware')
 const Recipes = require('./recipes-model')
 
-const router = express.Router()
+router.get('/', (req, res, next) => {
+    Recipes.getAllIngredients()
+        .then(recipes => {
+            res.json(recipes)
+        })
+        .catch(next)
+})
 
 router.get('/:recipe_id', checkRecipeId, (req, res, next) => {
     const { recipe_id}  = req.params
