@@ -8,14 +8,6 @@ const {
 } = require('./recipes-middleware')
 const Recipes = require('./recipes-model')
 
-router.get('/', (req, res, next) => {
-    Recipes.getAllIngredients()
-        .then(recipes => {
-            res.json(recipes)
-        })
-        .catch(next)
-})
-
 router.get('/:recipe_id', checkRecipeId, (req, res, next) => {
     const { recipe_id}  = req.params
 
